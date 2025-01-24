@@ -8,6 +8,11 @@ jobs:
   bump-dependencies:
     runs-on: ubuntu-latest
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@v2
+      with:
+        egress-policy: audit
+
     - uses: spinnaker/bumpdeps@master
       with:
         ref: ${{ github.event.client_payload.ref }}

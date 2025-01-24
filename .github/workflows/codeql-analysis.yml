@@ -15,6 +15,9 @@ on:
   schedule:
     - cron: '22 20 * * *'
 
+permissions:
+  contents: read
+
 jobs:
   analyze:
     if: startsWith(github.repository, 'spinnaker/')
@@ -33,6 +36,11 @@ jobs:
         # Learn more about CodeQL language support at https://git.io/codeql-language-support
 
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@v2
+      with:
+        egress-policy: audit
+
     - name: Checkout repository
       uses: actions/checkout@v4
 

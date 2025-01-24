@@ -6,10 +6,18 @@ env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx12g -Xms12g
   CONTAINER_REGISTRY: us-docker.pkg.dev/spinnaker-community/docker
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
       - name: Create more disk space
         run: sudo rm -rf /usr/share/dotnet && sudo rm -rf /opt/ghc && sudo rm -rf "/usr/local/share/boost" && sudo rm -rf "$AGENT_TOOLSDIRECTORY"
       - uses: actions/checkout@v4

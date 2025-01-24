@@ -5,6 +5,9 @@ on: workflow_call
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx12g -Xms12g
 
+permissions:
+  contents: read
+
 jobs:
   it-test-kubernetes:
     strategy:
@@ -40,6 +43,11 @@ jobs:
             kubernetes-image: "kindest/node:v1.21.14@sha256:8a4e9bb3f415d2bb81629ce33ef9c76ba514c14d707f9797a01e3216376ba093"
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
