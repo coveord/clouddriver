@@ -16,19 +16,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@v2
+        uses: step-security/harden-runner@c6295a65d1254861815972266d5933fd6e532bdf # v2.11.1
         with:
           egress-policy: audit
 
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12 # v4.7.0
         with:
           java-version: |
             17
           distribution: 'zulu'
       - name: Cache on push
         if: github.event_name == 'push'
-        uses: actions/cache@v4
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
           path: ~/.gradle
           key: ${{ runner.os }}-cd-it-${{ github.sha }}
@@ -37,7 +37,7 @@ jobs:
             ${{ runner.os }}-cd-it-${{ github.event.before }}
       - name: Cache on pull_request
         if: github.event_name == 'pull_request'
-        uses: actions/cache@v4
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
           path: ~/.gradle
           key: ${{ runner.os }}-cd-it-${{ github.event.pull_request.head.sha }}

@@ -16,13 +16,13 @@ jobs:
     steps:
       #https://github.com/NASA-IMPACT/hls-base/pull/17/files borrowed from this....
       - name: Harden Runner
-        uses: step-security/harden-runner@v2
+        uses: step-security/harden-runner@c6295a65d1254861815972266d5933fd6e532bdf # v2.11.1
         with:
           egress-policy: audit
 
       - name: Create more disk space
         run: sudo rm -rf /usr/share/dotnet && sudo rm -rf /opt/ghc && sudo rm -rf "/usr/local/share/boost" && sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
       # Given a tag, determine what branch we are on, so we can bump dependencies (or not)
@@ -47,10 +47,10 @@ jobs:
           echo "exactly one branch ($BRANCH)"
           echo BRANCH="$BRANCH" >> $GITHUB_ENV
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - uses: actions/setup-java@v4
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
+      - uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12 # v4.7.0
         with:
           java-version: |
             17
@@ -91,7 +91,7 @@ jobs:
       - name: Login to Google Cloud
         # Only run this on repositories in the 'spinnaker' org, not on forks.
         if: startsWith(github.repository, 'spinnaker/')
-        uses: 'google-github-actions/auth@v2'
+        uses: 'google-github-actions/auth@6fc4af4b145ae7821d527454aa9bd537d1f2dc5f # v2.1.7'
         # use service account flow defined at: https://github.com/google-github-actions/upload-cloud-storage#authenticating-via-service-account-key-json
         with:
           credentials_json: '${{ secrets.GAR_JSON_KEY }}'
@@ -99,7 +99,7 @@ jobs:
         # https://console.cloud.google.com/storage/browser/halconfig
         # Only run this on repositories in the 'spinnaker' org, not on forks.
         if: startsWith(github.repository, 'spinnaker/')
-        uses: 'google-github-actions/upload-cloud-storage@v2'
+        uses: 'google-github-actions/upload-cloud-storage@386ab77f37fdf51c0e38b3d229fad286861cc0d0 # v2.2.1'
         with:
           path: 'halconfig/'
           destination: 'halconfig/${{ steps.build_variables.outputs.REPO }}/${{ steps.release_info.outputs.RELEASE_VERSION }}'
@@ -107,7 +107,7 @@ jobs:
       - name: Login to GAR
         # Only run this on repositories in the 'spinnaker' org, not on forks.
         if: startsWith(github.repository, 'spinnaker/')
-        uses: docker/login-action@v3
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         # use service account flow defined at: https://github.com/docker/login-action#service-account-based-authentication-1
         with:
           registry: us-docker.pkg.dev
@@ -116,7 +116,7 @@ jobs:
       - name: Build and publish slim container image
         # Only run this on repositories in the 'spinnaker' org, not on forks.
         if: startsWith(github.repository, 'spinnaker/')
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6.15.0
         with:
           context: .
           file: Dockerfile.slim
@@ -129,7 +129,7 @@ jobs:
       - name: Build and publish ubuntu container image
         # Only run this on repositories in the 'spinnaker' org, not on forks.
         if: startsWith(github.repository, 'spinnaker/')
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6.15.0
         with:
           context: .
           file: Dockerfile.ubuntu
@@ -140,7 +140,7 @@ jobs:
             "${{ env.CONTAINER_REGISTRY }}/${{ steps.build_variables.outputs.REPO }}:${{ steps.release_info.outputs.RELEASE_VERSION }}-${{ steps.build_variables.outputs.VERSION }}-unvalidated-ubuntu"
       - name: Create release
         if: steps.release_info.outputs.SKIP_RELEASE == 'false'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@c95fe1489396fe8a9eb87c0abf8aa5b2ef267fda # v2.2.1
         with:
           body: |
             ${{ steps.release_info.outputs.CHANGELOG }}
@@ -156,7 +156,7 @@ jobs:
         run: sleep 900
       - name: Trigger dependency bump workflow
         if: env.BRANCH == 'origin/master'
-        uses: peter-evans/repository-dispatch@v3
+        uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0 # v3.0.0
         with:
           token: ${{ secrets.SPINNAKER_GITHUB_TOKEN }}
           event-type: bump-dependencies
